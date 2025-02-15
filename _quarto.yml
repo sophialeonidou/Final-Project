@@ -4,17 +4,23 @@ project:
   execute-dir: project
   
 website:
-  title: "Website Template"
+  title: "Final Project"
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - href: tab-one/tab-one-index.qmd
-        text: Tab title
-      - href: tab-presentation/presentation-index.qmd
-        text: Presentations        
-      - href: tab-iframe/iframe-index.qmd
-        text: iFrame example
+        text: Introduction
+      - href: iFrame.qmd
+        text: Questionnaire iFrame
+      - href: Data.qmd
+        text: Data Insights        
+      - href: DashboardDemonstration.qmd
+        text: Dashboard Demonstration
+      - href: GrowthPotential.qmd
+        text: Growth Potential
+      
+        
+        
+        
     logo: images/logo_tepak.png
 
 format:

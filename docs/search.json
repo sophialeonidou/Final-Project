@@ -1,5 +1,82 @@
 [
   {
+    "objectID": "GrowthPotential.html",
+    "href": "GrowthPotential.html",
+    "title": "Add a title",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+  },
+  {
+    "objectID": "GrowthPotential.html#nemo-enim-ipsam",
+    "href": "GrowthPotential.html#nemo-enim-ipsam",
+    "title": "Add a title",
+    "section": "Nemo enim ipsam",
+    "text": "Nemo enim ipsam\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+  },
+  {
+    "objectID": "tab-presentation/presentation-index.html",
+    "href": "tab-presentation/presentation-index.html",
+    "title": "Examples of presentations",
+    "section": "",
+    "text": "Here we can add links to presentations.\nFor now you can access the presentation by adjusting the URL below with your details\nhttps://YOUR-GITHUB-ACCOUNT.github.io/NAME-OF-YOUR-GIT-REPO/tab-presentation/presentation1/presentation-example.html\nSimply change my capitalized text for your: i) your github username\nii) the name of your github repo then copy the URL and paste it to visit the webpage.\nThe adjusted URL above should take you to an example of a simple Quarto presentation."
+  },
+  {
+    "objectID": "Data.html",
+    "href": "Data.html",
+    "title": "Data Insights",
+    "section": "",
+    "text": "Code\n# Create data tables\n\n# Create Codebook\ncodebook &lt;- tibble(\n  variable_name = c(\"age\", \"gender\", \"loneliness_frequency\", \"emotional_wellbeing\",\n                    \"group_call_hours\", \"forum_participation\", \"subscription_type\",\n                    \"platform_satisfaction\"),\n  question = c(\n    \"What is your age?\",\n    \"What is your gender?\",\n    \"How often do you feel lonely?\",\n    \"How would you describe your emotional well-being in the last month?\",\n    \"How many hours per week do you spend in group calls on the platform?\",\n    \"How often do you participate in forum discussions?\",\n    \"What is your subscription type?\",\n    \"How satisfied are you with the platform’s ability to reduce loneliness?\"\n  )\n)\n\nset.seed(123)\ndata &lt;- tibble(\n    user_id = paste0(\"id_\", 1:500),  # Unique user IDs\n    age = sample(30:60, 500, replace = TRUE),  # Age limited between 30-60 years old\n    gender = sample(c(\"Male\", \"Female\", \"Non-Binary\"), 500, replace = TRUE),\n    loneliness_frequency = sample(c(\"Never\", \"Rarely\", \"Sometimes\", \"Often\", \"Always\"), 500, replace = TRUE),\n    forum_participation = sample(c(\"Never\", \"Rarely (1-3 times per month)\", \"Sometimes (1-2 times per week)\", \n                                   \"Often (3+ times per week)\", \"Daily\"), 500, replace = TRUE),\n    subscription_type = sample(c(\"Per session\", \"Monthly\"), 500, replace = TRUE),\n    platform_satisfaction = sample(1:5, 500, replace = TRUE)  # 1 (Not at all) to 5 (Extremely)\n  )\n\n\n\n\nCode\n  # Function to generate skewed group call hours based on well-being\n  group_call_distribution &lt;- function(emotional_state) {\n    if (emotional_state == \"Very Positive\") {\n      return(sample(c(\"0 hours\", \"1-2 hours\", \"3-5 hours\", \"6-8 hours\", \"9+ hours\"), 1,\n                    prob = c(0.05, 0.10, 0.20, 0.30, 0.35)))  # More likely to participate\n    } else if (emotional_state == \"Somewhat Positive\") {\n      return(sample(c(\"0 hours\", \"1-2 hours\", \"3-5 hours\", \"6-8 hours\", \"9+ hours\"), 1,\n                    prob = c(0.10, 0.15, 0.25, 0.30, 0.20)))\n    } else if (emotional_state == \"Neutral\") {\n      return(sample(c(\"0 hours\", \"1-2 hours\", \"3-5 hours\", \"6-8 hours\", \"9+ hours\"), 1,\n                    prob = c(0.15, 0.20, 0.30, 0.20, 0.15)))\n    } else if (emotional_state == \"Somewhat Negative\") {\n      return(sample(c(\"0 hours\", \"1-2 hours\", \"3-5 hours\", \"6-8 hours\", \"9+ hours\"), 1,\n                    prob = c(0.25, 0.30, 0.25, 0.15, 0.05)))\n    } else {\n      return(sample(c(\"0 hours\", \"1-2 hours\", \"3-5 hours\", \"6-8 hours\", \"9+ hours\"), 1,\n                    prob = c(0.50, 0.30, 0.15, 0.04, 0.01)))  # Less likely to participate\n    }\n  }\n  \n  # Function to adjust emotional well-being based on participation\n  adjusted_sentiment &lt;- function(group_calls) {\n    if (group_calls == \"9+ hours\") {\n      return(sample(c(\"Very Positive\", \"Somewhat Positive\", \"Neutral\"), 1, prob = c(0.60, 0.30, 0.10)))\n    } else if (group_calls == \"6-8 hours\") {\n      return(sample(c(\"Very Positive\", \"Somewhat Positive\", \"Neutral\"), 1, prob = c(0.50, 0.35, 0.15)))\n    } else if (group_calls == \"3-5 hours\") {\n      return(sample(c(\"Somewhat Positive\", \"Neutral\", \"Somewhat Negative\"), 1, prob = c(0.40, 0.40, 0.20)))\n    } else {\n      return(sample(c(\"Neutral\", \"Somewhat Negative\", \"Very Negative\"), 1, prob = c(0.30, 0.50, 0.20)))\n    }\n  }\n  \n  # Apply skewed probabilities\n  data &lt;- data %&gt;%\n    rowwise() %&gt;%\n    mutate(emotional_wellbeing = adjusted_sentiment(sample(c(\"9+ hours\", \"6-8 hours\", \"3-5 hours\", \"1-2 hours\", \"0 hours\"), 1))) %&gt;%\n    mutate(group_call_hours = group_call_distribution(emotional_wellbeing))\n\n\n\n\nCode\n  # ------------------------------\n  # 📌 Step 4: Assign Timestamps\n  # ------------------------------\n  # Define the start and end datetime\n  start_datetime &lt;- ymd_hms(\"2024-01-01T00:00:00Z\")\n  end_datetime &lt;- ymd_hms(\"2024-12-31T23:59:59Z\")\n  \n  # Calculate total seconds in one year\n  total_seconds &lt;- as.numeric(difftime(end_datetime, start_datetime, units = \"secs\"))\n  \n  # Generate random timestamps\n  data &lt;- data %&gt;%\n    mutate(timestamp = start_datetime + seconds(runif(n(), min = 0, max = total_seconds)))"
+  },
+  {
+    "objectID": "Introduction.html",
+    "href": "Introduction.html",
+    "title": "EndingLoneliness",
+    "section": "",
+    "text": "Loneliness is a growing societal issue, affecting mental well-being and productivity. Studies show that 1 in 3 adults experience loneliness, leading to increased stress, anxiety, and even health risks. Despite the rise of social media, meaningful connections remain difficult to build.\nEndingLoneliness is a data-driven platform designed to combat loneliness through community engagement, real-time insights, and interactive support systems. By leveraging group calls, forum discussions, and emotional sentiment analysis, the platform helps users track their social engagement and emotional well-being, encouraging deeper connections.\nThrough AI-powered dashboards, personalized recommendations, and interactive analytics, EndingLoneliness provides measurable solutions to help individuals feel more connected and supported."
+  },
+  {
+    "objectID": "DashboardDemonstration.html",
+    "href": "DashboardDemonstration.html",
+    "title": "Add a title",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+  },
+  {
+    "objectID": "DashboardDemonstration.html#nemo-enim-ipsam",
+    "href": "DashboardDemonstration.html#nemo-enim-ipsam",
+    "title": "Add a title",
+    "section": "Nemo enim ipsam",
+    "text": "Nemo enim ipsam\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+  },
+  {
+    "objectID": "tab-one/tab-one-index.html",
+    "href": "tab-one/tab-one-index.html",
+    "title": "Add a title to your Tab index page",
+    "section": "",
+    "text": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+  },
+  {
+    "objectID": "tab-one/tab-one-index.html#nemo-enim-ipsam",
+    "href": "tab-one/tab-one-index.html#nemo-enim-ipsam",
+    "title": "Add a title to your Tab index page",
+    "section": "",
+    "text": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+  },
+  {
+    "objectID": "tab-one/tab-one-index.html#add-an-image",
+    "href": "tab-one/tab-one-index.html#add-an-image",
+    "title": "Add a title to your Tab index page",
+    "section": "Add an image",
+    "text": "Add an image\n\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "EndingLoneliness",
+    "section": "",
+    "text": "Loneliness is a growing societal issue, affecting mental well-being and productivity. Studies show that 1 in 3 adults experience loneliness, leading to increased stress, anxiety, and even health risks. Despite the rise of social media, meaningful connections remain difficult to build.\nEndingLoneliness is a data-driven platform designed to combat loneliness through community engagement, real-time insights, and interactive support systems. By leveraging group calls, forum discussions, and emotional sentiment analysis, the platform helps users track their social engagement and emotional well-being, encouraging deeper connections.\nThrough AI-powered dashboards, personalized recommendations, and interactive analytics, EndingLoneliness provides measurable solutions to help individuals feel more connected and supported."
+  },
+  {
     "objectID": "tab-presentation/presentation1/presentation-example.html#what-this-course-is-about",
     "href": "tab-presentation/presentation1/presentation-example.html#what-this-course-is-about",
     "title": "Course overview",
@@ -68,47 +145,5 @@
     "title": "Course overview",
     "section": "Summary",
     "text": "Summary\n\nDashboards are powerful tools for decision-making.\nEffective dashboards balance clarity, relevance, and visual appeal.\nAvoid common pitfalls by focusing on user needs and testing designs."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Add a title",
-    "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\nSed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
-  },
-  {
-    "objectID": "index.html#nemo-enim-ipsam",
-    "href": "index.html#nemo-enim-ipsam",
-    "title": "Add a title",
-    "section": "Nemo enim ipsam",
-    "text": "Nemo enim ipsam\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
-  },
-  {
-    "objectID": "tab-one/tab-one-index.html",
-    "href": "tab-one/tab-one-index.html",
-    "title": "Add a title to your Tab index page",
-    "section": "",
-    "text": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
-  },
-  {
-    "objectID": "tab-one/tab-one-index.html#nemo-enim-ipsam",
-    "href": "tab-one/tab-one-index.html#nemo-enim-ipsam",
-    "title": "Add a title to your Tab index page",
-    "section": "",
-    "text": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
-  },
-  {
-    "objectID": "tab-one/tab-one-index.html#add-an-image",
-    "href": "tab-one/tab-one-index.html#add-an-image",
-    "title": "Add a title to your Tab index page",
-    "section": "Add an image",
-    "text": "Add an image\n\nNemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt."
-  },
-  {
-    "objectID": "tab-presentation/presentation-index.html",
-    "href": "tab-presentation/presentation-index.html",
-    "title": "Examples of presentations",
-    "section": "",
-    "text": "Here we can add links to presentations.\nFor now you can access the presentation by adjusting the URL below with your details\nhttps://YOUR-GITHUB-ACCOUNT.github.io/NAME-OF-YOUR-GIT-REPO/tab-presentation/presentation1/presentation-example.html\nSimply change my capitalized text for your: i) your github username\nii) the name of your github repo then copy the URL and paste it to visit the webpage.\nThe adjusted URL above should take you to an example of a simple Quarto presentation."
   }
 ]

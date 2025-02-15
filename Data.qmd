@@ -1,0 +1,111 @@
+---
+title: "Data Insights"
+format: 
+  html:
+    code-fold: true
+    code-summary: "Code"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r datatables, include=FALSE}
+library(tidyverse)
+library(lubridate)
+# library(writexl)
+```
+  
+```{r data}
+# Create data tables
+
+# Create Codebook
+codebook <- tibble(
+  variable_name = c("age", "gender", "loneliness_frequency", "emotional_wellbeing",
+                    "group_call_hours", "forum_participation", "subscription_type",
+                    "platform_satisfaction"),
+  question = c(
+    "What is your age?",
+    "What is your gender?",
+    "How often do you feel lonely?",
+    "How would you describe your emotional well-being in the last month?",
+    "How many hours per week do you spend in group calls on the platform?",
+    "How often do you participate in forum discussions?",
+    "What is your subscription type?",
+    "How satisfied are you with the platform’s ability to reduce loneliness?"
+  )
+)
+
+set.seed(123)
+data <- tibble(
+    user_id = paste0("id_", 1:500),  # Unique user IDs
+    age = sample(30:60, 500, replace = TRUE),  # Age limited between 30-60 years old
+    gender = sample(c("Male", "Female", "Non-Binary"), 500, replace = TRUE),
+    loneliness_frequency = sample(c("Never", "Rarely", "Sometimes", "Often", "Always"), 500, replace = TRUE),
+    forum_participation = sample(c("Never", "Rarely (1-3 times per month)", "Sometimes (1-2 times per week)", 
+                                   "Often (3+ times per week)", "Daily"), 500, replace = TRUE),
+    subscription_type = sample(c("Per session", "Monthly"), 500, replace = TRUE),
+    platform_satisfaction = sample(1:5, 500, replace = TRUE)  # 1 (Not at all) to 5 (Extremely)
+  )
+  
+```
+
+```{r skewed} 
+  
+  # Function to generate skewed group call hours based on well-being
+  group_call_distribution <- function(emotional_state) {
+    if (emotional_state == "Very Positive") {
+      return(sample(c("0 hours", "1-2 hours", "3-5 hours", "6-8 hours", "9+ hours"), 1,
+                    prob = c(0.05, 0.10, 0.20, 0.30, 0.35)))  # More likely to participate
+    } else if (emotional_state == "Somewhat Positive") {
+      return(sample(c("0 hours", "1-2 hours", "3-5 hours", "6-8 hours", "9+ hours"), 1,
+                    prob = c(0.10, 0.15, 0.25, 0.30, 0.20)))
+    } else if (emotional_state == "Neutral") {
+      return(sample(c("0 hours", "1-2 hours", "3-5 hours", "6-8 hours", "9+ hours"), 1,
+                    prob = c(0.15, 0.20, 0.30, 0.20, 0.15)))
+    } else if (emotional_state == "Somewhat Negative") {
+      return(sample(c("0 hours", "1-2 hours", "3-5 hours", "6-8 hours", "9+ hours"), 1,
+                    prob = c(0.25, 0.30, 0.25, 0.15, 0.05)))
+    } else {
+      return(sample(c("0 hours", "1-2 hours", "3-5 hours", "6-8 hours", "9+ hours"), 1,
+                    prob = c(0.50, 0.30, 0.15, 0.04, 0.01)))  # Less likely to participate
+    }
+  }
+  
+  # Function to adjust emotional well-being based on participation
+  adjusted_sentiment <- function(group_calls) {
+    if (group_calls == "9+ hours") {
+      return(sample(c("Very Positive", "Somewhat Positive", "Neutral"), 1, prob = c(0.60, 0.30, 0.10)))
+    } else if (group_calls == "6-8 hours") {
+      return(sample(c("Very Positive", "Somewhat Positive", "Neutral"), 1, prob = c(0.50, 0.35, 0.15)))
+    } else if (group_calls == "3-5 hours") {
+      return(sample(c("Somewhat Positive", "Neutral", "Somewhat Negative"), 1, prob = c(0.40, 0.40, 0.20)))
+    } else {
+      return(sample(c("Neutral", "Somewhat Negative", "Very Negative"), 1, prob = c(0.30, 0.50, 0.20)))
+    }
+  }
+  
+  # Apply skewed probabilities
+  data <- data %>%
+    rowwise() %>%
+    mutate(emotional_wellbeing = adjusted_sentiment(sample(c("9+ hours", "6-8 hours", "3-5 hours", "1-2 hours", "0 hours"), 1))) %>%
+    mutate(group_call_hours = group_call_distribution(emotional_wellbeing))
+```
+
+```{r probabilities}
+
+  # ------------------------------
+  # 📌 Step 4: Assign Timestamps
+  # ------------------------------
+  # Define the start and end datetime
+  start_datetime <- ymd_hms("2024-01-01T00:00:00Z")
+  end_datetime <- ymd_hms("2024-12-31T23:59:59Z")
+  
+  # Calculate total seconds in one year
+  total_seconds <- as.numeric(difftime(end_datetime, start_datetime, units = "secs"))
+  
+  # Generate random timestamps
+  data <- data %>%
+    mutate(timestamp = start_datetime + seconds(runif(n(), min = 0, max = total_seconds)))
+```
+
+
+  

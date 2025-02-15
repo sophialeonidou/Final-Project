@@ -25,5 +25,32 @@
   },
   "tab-iframe/iframe-index.qmd": {
     "iframe-index.html": "bf78c40e"
+  },
+  "DashboardDemonstration.qmd": {
+    "DashboardDemonstration.html": "83891edf"
+  },
+  "Introduction.qmd": {
+    "Introduction.html": "06d4b0ab"
+  },
+  "DataInisights.qmd": {
+    "DataInisights.html": "ce3cd02c"
+  },
+  "GrowthPotential.qmd": {
+    "GrowthPotential.html": "8f79a86c"
+  },
+  "iFrame.qmd": {
+    "iFrame.html": "901a92b4"
+  },
+  "Datainisights.qmd": {
+    "Datainisights.html": "9cbc0bca"
+  },
+  "ex/Datainisights.qmd": {
+    "Datainisights.html": "6ada23b5"
+  },
+  "Dashbord.qmd": {
+    "Dashbord.html": "c18fad8d"
+  },
+  "Data.qmd": {
+    "Data.html": "60b452a8"
   }
 }
